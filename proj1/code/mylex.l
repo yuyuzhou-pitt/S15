@@ -12,6 +12,7 @@ extern int yycolumn, yylength, yyline, yylval;
 digit         [0-9]
 consint       [0-9]+
 id            [a-zA-Z][a-zA-Z0-9]*
+consstr       \'(\\.|.[^'])*\'
 delim         [ \t]
 ws            {delim}+
 newline       [\n]
@@ -57,6 +58,8 @@ void                {yycolumn+=4;return(VOIDnum);}
 ]                   {yycolumn+=1;return(RBRACnum);}
 [(]                 {yycolumn+=1;return(LPARENnum);}
 [)]                 {yycolumn+=1;return(RPARENnum);}
+{consstr}           {yycolumn+=yyleng;return (SCONSTnum);}
+[^{consstr}]        {printf("Error: line %d: Unmatched string.\n", yyline); yycolumn=0;}
 %%
 
 int yyline = 0;
