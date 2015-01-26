@@ -18,7 +18,8 @@ newline       [\n]
 
 %%
 {newline}           {yyline++; yycolumn=0;}
-"/*"(.*)"*/"        {yycolumn+=yyleng;printf("A %d bit comments match", yyleng);}
+"/*"(.*)"*/"        {yycolumn+=yyleng;}
+"/*"(.*)"\n"        {printf("Error: line %d: Unmatched comments", yyline);yyline++; yycolumn=0;}
 &&                  {yycolumn+=2;return(ANDnum);}
 \|\|                {yycolumn+=2;return(ORnum);}
 :=                  {yycolumn+=2;return(ASSGNnum);}
