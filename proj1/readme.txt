@@ -19,7 +19,7 @@ P.S. Output of the test result
 
 I. Test environment
 -------------------
-  This code has been tested on machine oxygen.cs.pitt.edu.
+  This code has been tested on:
   - OS: CentOS release 6.5
   - kernel: 2.6.32-431.11.2.el6.x86_64
   - flex: flex-2.5.35-8.el6.x86_64
