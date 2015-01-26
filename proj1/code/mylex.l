@@ -197,13 +197,13 @@ main()
        OUTIndex++;
     } while (lexReturn != 0);
 
-    printf("\nLine\tColummn\tToken\tIndex_in_String_Table\n");
+    printf("\n%10s%10s%25s%25s\n","Line", "Column", "Token", "Index_in_String_Table");
     for (i=0;i<OUTIndex;i++){
         if (output[i].token == EOFnum)
-            printf("\t\t%s\n",transToken(output[i].token));
+            printf("%45s\n",transToken(output[i].token));
         else if (output[i].index == -1)
-            printf("%d\t%d\t%s\n",output[i].line, output[i].column, transToken(output[i].token));
-       else printf("%d\t%d\t%s\t%d\n",output[i].line, output[i].column, transToken(output[i].token),output[i].index);
+            printf("%10d%10d%25s\n",output[i].line, output[i].column, transToken(output[i].token));
+       else printf("%10d%10d%25s%13d\n",output[i].line, output[i].column, transToken(output[i].token),output[i].index);
     }
 
     for (i=0;i<STIndex;i++){
