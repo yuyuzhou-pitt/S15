@@ -1,10 +1,12 @@
 %{
 #include <stdlib.h>
+#include <string.h>
 #include "token.h"
 #define LIMIT1 1000 //total number of characters in all dictint identifier and strings
 #define LIMIT2 10000 //total number of Token
 
 extern int yycolumn, yylength, yyline, yylval;
+extern char* yystring;
 %}
 
 /* regular definitions */
@@ -19,6 +21,8 @@ newline       [\n]
 
 %%
 {newline}           {yyline++; yycolumn=0;}
+"/*"(.*)"*/"        {yycolumn+=yyleng;}
+"/*"(.*)"\n"        {printf("Error: line %d: Unmatched comments", yyline);yyline++; yycolumn=0;}
 &&                  {yycolumn+=2;return(ANDnum);}
 \|\|                {yycolumn+=2;return(ORnum);}
 :=                  {yycolumn+=2;return(ASSGNnum);}
@@ -50,8 +54,8 @@ void                {yycolumn+=4;return(VOIDnum);}
 [/]                 {yycolumn+=1;return(DIVIDEnum);}
 [!]                 {yycolumn+=1;return(NOTnum);}
 {ws}                {yycolumn+=yyleng;}
-{id}		    {yycolumn+=yyleng;return (IDnum);}
-{consint}           {yycolumn+=yyleng;return (ICONSTnum);}
+{id}		    {yycolumn+=yyleng;yylength=yyleng;yystring=yytext;return(IDnum);}
+{consint}           {yycolumn+=yyleng;return(ICONSTnum);}
 [/{]                {yycolumn+=1;return(LBRACEnum);}
 [/}]                {yycolumn+=1;return(RBRACEnum);}
 [/[]                {yycolumn+=1;return(LBRACnum);}
@@ -64,6 +68,9 @@ void                {yycolumn+=4;return(VOIDnum);}
 
 int yyline = 0;
 int yycolumn = 0;
+int yylength = 0;
+char *yystring = NULL;
+
 int yywrap()
 {
     return 1;
@@ -72,11 +79,20 @@ int yywrap()
 char StringTable[LIMIT1];// stringtable
 int STIndex=0;// A pointer to next empty slot in String Table
 
+typedef struct EasyStringTable{
+    int StringType; //SCONSTnum or IDnum
+    int Index_inST; // index in string table
+    char *string; //String
+}StringTableCB;
+
+int stcbIndex=0;
+StringTableCB st_cb[LIMIT1];
+
 typedef struct{
     int line;
     int column;
     int token;
-    int Index_in_String_Table;   
+    int index;   
 }LineItem;  // one line of the output
  
 LineItem output[LIMIT2]; // output table
@@ -130,6 +146,42 @@ char* transToken(int Tokenid)
     }
 }
 
+int updateStringTable(char *ch, int type, int len)
+{
+    int i = 0;
+    //case insensitive
+    while (i<len){
+       if (ch[i]>='A' && ch[i] <='Z') {
+           ch[i]=ch[i]+'a'-'A';
+       }
+       i++;
+    }
+    i = 0;
+
+    //try maching old record;
+    while (i<stcbIndex) {
+        if ((st_cb[i].StringType == type) &&
+            (strcmp(ch, st_cb[i].string) == 0))
+            return(st_cb[i].Index_inST);
+        i++;
+    } 
+    // update a new record
+    st_cb[stcbIndex].StringType = type;
+    st_cb[stcbIndex].Index_inST = STIndex;
+    st_cb[stcbIndex].string = (char *) malloc(len);
+    strcpy(st_cb[stcbIndex].string, ch);
+    i = 0;
+    while (i<len) {
+        StringTable[STIndex] = ch[i];
+        STIndex++;
+        i++;
+    }
+    StringTable[STIndex] = ' ';
+    STIndex=STIndex+1;
+    stcbIndex++;
+    return(st_cb[stcbIndex-1].Index_inST);
+}
+
 main()
 {
     int lexReturn;
@@ -139,14 +191,24 @@ main()
        output[OUTIndex].token=lexReturn;
        output[OUTIndex].line=yyline;
        output[OUTIndex].column=yycolumn;
+       output[OUTIndex].index = -1;
+       if ((output[OUTIndex].token == IDnum) || (output[OUTIndex].token == SCONSTnum)) 
+          output[OUTIndex].index = updateStringTable(yystring, output[OUTIndex].token, yylength);
        OUTIndex++;
-       //printf("return token type is %d\n", lexReturn);
-
     } while (lexReturn != 0);
 
     printf("\nLine\tColummn\tToken\tIndex_in_String_Table\n");
     for (i=0;i<OUTIndex;i++){
-        printf("%d\t%d\t%s\n",output[i].line, output[i].column, 
-               transToken(output[i].token));
+        if (output[i].token == EOFnum)
+            printf("\t\t%s\n",transToken(output[i].token));
+        else if (output[i].index == -1)
+            printf("%d\t%d\t%s\n",output[i].line, output[i].column, transToken(output[i].token));
+       else printf("%d\t%d\t%s\t%d\n",output[i].line, output[i].column, transToken(output[i].token),output[i].index);
     }
+
+    for (i=0;i<STIndex;i++){
+        printf("%c", StringTable[i]);
+    }
+    printf("\n");
+
 }
