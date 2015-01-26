@@ -14,11 +14,8 @@ extern char* yystring;
 digit         [0-9]
 consint       [0-9]+
 id            [a-zA-Z][a-zA-Z0-9]*
-<<<<<<< HEAD
 wrongid       [0-9]+[a-zA-Z]+
-=======
 consstr       \'(\\.|.[^'])*\'
->>>>>>> 7eb6b1cb9765e5e81d7905571ebfdc79a5382e20
 delim         [ \t]
 ws            {delim}+
 newline       [\n]
