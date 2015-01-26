@@ -5,7 +5,6 @@
 #define LIMIT2 10000 //total number of Token
 
 extern int yycolumn, yylength, yyline, yylval;
-extern int brac, paren, brace;
 %}
 
 /* regular definitions */
@@ -52,13 +51,16 @@ void                {yycolumn+=4;return(VOIDnum);}
 {ws}                {yycolumn+=yyleng;}
 {id}		    {yycolumn+=yyleng;return (IDnum);}
 {consint}           {yycolumn+=yyleng;return (ICONSTnum);}
+[/{]                {yycolumn+=1;return(LBRACEnum);}
+[/}]                {yycolumn+=1;return(RBRACEnum);}
+[/[]                {yycolumn+=1;return(LBRACnum);}
+]                   {yycolumn+=1;return(RBRACnum);}
+[(]                 {yycolumn+=1;return(LPARENnum);}
+[)]                 {yycolumn+=1;return(RPARENnum);}
 %%
 
 int yyline = 0;
 int yycolumn = 0;
-int brac = 0; //unmatched '['
-int paren = 0; //unmatched '('
-int brace = 0; //unmatched '{'
 int yywrap()
 {
     return 1;
