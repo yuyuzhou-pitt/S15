@@ -15,7 +15,6 @@ digit         [0-9]
 consint       [0-9]+
 id            [a-zA-Z][a-zA-Z0-9]*
 wrongid       [0-9]+[a-zA-Z]+
-consstr       \'(\\.|.[^'])*\'
 delim         [ \t]
 ws            {delim}+
 newline       [\n]
@@ -64,8 +63,20 @@ void                {yycolumn+=4;return(VOIDnum);}
 ]                   {yycolumn+=1;return(RBRACnum);}
 [(]                 {yycolumn+=1;return(LPARENnum);}
 [)]                 {yycolumn+=1;return(RPARENnum);}
-{consstr}           {yycolumn+=yyleng;return (SCONSTnum);}
-[^{consstr}]        {printf("Error: line %d: Unmatched string.\n", yyline); yycolumn=0;}
+\'(\\.|[^\\'\n])*("\n") { 
+                          printf("Error: line %d: Uneding String.\n", yyline);
+                          yyline+=1;yycolumn=0;
+                      }
+\'(\\.|[^\\'\n])*(\') {
+                         if ((yytext[yyleng-1] == '\\') && (yytext[yyleng] == '\'')) 
+                              yymore();
+                         else {
+                             yycolumn+=yyleng;
+                             yystring=yytext;
+                             yylength=yyleng;
+                             return(SCONSTnum); 
+                             }
+                     }
 .                   {yycolumn+=yyleng;printf("Error: line %d: Wrong ID.\n", yyline);}
 %%
 
