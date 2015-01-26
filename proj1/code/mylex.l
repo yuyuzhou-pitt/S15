@@ -14,6 +14,7 @@ extern char* yystring;
 digit         [0-9]
 consint       [0-9]+
 id            [a-zA-Z][a-zA-Z0-9]*
+wrongid       [0-9]+[a-zA-Z]+
 delim         [ \t]
 ws            {delim}+
 newline       [\n]
@@ -54,6 +55,7 @@ void                {yycolumn+=4;return(VOIDnum);}
 [!]                 {yycolumn+=1;return(NOTnum);}
 {ws}                {yycolumn+=yyleng;}
 {id}		    {yycolumn+=yyleng;yylength=yyleng;yystring=yytext;return(IDnum);}
+{wrongid}           {yycolumn+=yyleng;printf("Error: line %d: Wrong ID.\n", yyline);}
 {consint}           {yycolumn+=yyleng;return(ICONSTnum);}
 [/{]                {yycolumn+=1;return(LBRACEnum);}
 [/}]                {yycolumn+=1;return(RBRACEnum);}
@@ -61,6 +63,7 @@ void                {yycolumn+=4;return(VOIDnum);}
 ]                   {yycolumn+=1;return(RBRACnum);}
 [(]                 {yycolumn+=1;return(LPARENnum);}
 [)]                 {yycolumn+=1;return(RPARENnum);}
+.                   {yycolumn+=yyleng;printf("Error: line %d: Wrong ID.\n", yyline);}
 %%
 
 int yyline = 0;
