@@ -22,7 +22,7 @@ newline       [\n]
 %%
 {newline}           {yyline++; yycolumn=0;}
 "/*"(.*)"*/"        {yycolumn+=yyleng;}
-"/*"(.*)"\n"        {printf("Error: line %d: Unmatched comments", yyline);yyline++; yycolumn=0;}
+"/*"(.*)"\n"        {printf("Error: line %d: Unmatched comments.\n", yyline);yyline++; yycolumn=0;}
 &&                  {yycolumn+=2;return(ANDnum);}
 \|\|                {yycolumn+=2;return(ORnum);}
 :=                  {yycolumn+=2;return(ASSGNnum);}
@@ -162,7 +162,7 @@ char* transToken(int Tokenid)
 
 int updateStringTable(char *ch, int type, int len)
 {
-    int i = 0;
+    int i= 0; int j=0;
     //case insensitive
     while (i<len){
        if (ch[i]>='A' && ch[i] <='Z') {
@@ -170,9 +170,47 @@ int updateStringTable(char *ch, int type, int len)
        }
        i++;
     }
-    i = 0;
+    //escape sequence
+    if (type == SCONSTnum) {
+        i = 1;  // ignore first '  
+        j = 0;
+        while (i < len-1){ //ignore last '
+           if ((ch[i] == '\\') && (ch[i+1] == 'n'))  //handle \n
+           {
+              ch[j]='\n';
+              i+=2;
+              j++;
+           }
+           else if ((ch[i] == '\\') && (ch[i+1] == 't'))  //handle \t
+           {
+              ch[j]='\t';
+              i+=2;
+              j++;
+           }
+           else if ((ch[i] == '\\') && (ch[i+1] == '\''))  //handle \'
+           {
+              ch[j]='\'';
+              i+=2;
+              j++;
+           }
+           else if ((ch[i] == '\\') && (ch[i+1] == '\\'))  //handle '\\'
+           {
+              ch[j]='\\';
+              i+=2;
+              j++;
+           }
+           else {
+               ch[j]=ch[i];
+               i++;
+               j++;
+           }
+        }
+        len = j; 
+    } 
+
 
     //try maching old record;
+    i = 0;
     while (i<stcbIndex) {
         if ((st_cb[i].StringType == type) &&
             (strcmp(ch, st_cb[i].string) == 0))
