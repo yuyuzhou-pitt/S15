@@ -14,7 +14,11 @@ extern char* yystring;
 digit         [0-9]
 consint       [0-9]+
 id            [a-zA-Z][a-zA-Z0-9]*
+<<<<<<< HEAD
 wrongid       [0-9]+[a-zA-Z]+
+=======
+consstr       \'(\\.|.[^'])*\'
+>>>>>>> 7eb6b1cb9765e5e81d7905571ebfdc79a5382e20
 delim         [ \t]
 ws            {delim}+
 newline       [\n]
@@ -63,7 +67,12 @@ void                {yycolumn+=4;return(VOIDnum);}
 ]                   {yycolumn+=1;return(RBRACnum);}
 [(]                 {yycolumn+=1;return(LPARENnum);}
 [)]                 {yycolumn+=1;return(RPARENnum);}
+<<<<<<< HEAD
 .                   {yycolumn+=yyleng;printf("Error: line %d: Wrong ID.\n", yyline);}
+=======
+{consstr}           {yycolumn+=yyleng;return (SCONSTnum);}
+[^{consstr}]        {printf("Error: line %d: Unmatched string.\n", yyline); yycolumn=0;}
+>>>>>>> 7eb6b1cb9765e5e81d7905571ebfdc79a5382e20
 %%
 
 int yyline = 0;
