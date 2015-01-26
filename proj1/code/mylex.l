@@ -20,64 +20,64 @@ ws            {delim}+
 newline       [\n]
 
 %%
-{newline}           {yyline++; yycolumn=0;}
-"/*"(.*)"*/"        {yycolumn+=yyleng;}
-"/*"(.*)"\n"        {printf("Error: line %d: Unmatched comments.\n", yyline);yyline++; yycolumn=0;}
-&&                  {yycolumn+=2;return(ANDnum);}
-\|\|                {yycolumn+=2;return(ORnum);}
-:=                  {yycolumn+=2;return(ASSGNnum);}
-declarations        {yycolumn+=12;return(DECLARATIONSnum);}
-enddeclarations     {yycolumn+=15;return(ENDDECLARATIONSnum);}
-int                 {yycolumn+=3;return(INTnum);}
-method              {yycolumn+=6;return(METHODnum);}
-program             {yycolumn+=7;return(PROGRAMnum);}
-val                 {yycolumn+=3;return(VALnum);}
-while               {yycolumn+=5;return(WHILEnum);}
-class               {yycolumn+=5;return(CLASSnum);}
-else                {yycolumn+=4;return(ELSEnum);}
-if                  {yycolumn+=2;return(IFnum);}
-return              {yycolumn+=6;return(RETURNnum);}
-void                {yycolumn+=4;return(VOIDnum);} 
-[.]                 {yycolumn+=1;return(DOTnum);}
-[,]                 {yycolumn+=1;return(COMMAnum);}
-[;]                 {yycolumn+=1;return(SEMInum);}
-==                  {yycolumn+=2;return(EQnum);}
-!=                  {yycolumn+=2;return(NEnum);}
->=                  {yycolumn+=2;return(GEnum);}
-\<=                 {yycolumn+=2;return(LEnum);}
-[=]                 {yycolumn+=1;return(EQUALnum);}
-[<]                 {yycolumn+=1;return(LTnum);}
-[>]                 {yycolumn+=1;return(GTnum);}
-[+]                 {yycolumn+=1;return(PLUSnum);}
-[-]                 {yycolumn+=1;return(MINUSnum);}
-[*]                 {yycolumn+=1;return(TIMESnum);}
-[/]                 {yycolumn+=1;return(DIVIDEnum);}
-[!]                 {yycolumn+=1;return(NOTnum);}
-{ws}                {yycolumn+=yyleng;}
-{id}		    {yycolumn+=yyleng;yylength=yyleng;yystring=yytext;return(IDnum);}
-{wrongid}           {yycolumn+=yyleng;printf("Error: line %d: Wrong ID.\n", yyline);}
-{consint}           {yycolumn+=yyleng;return(ICONSTnum);}
-[/{]                {yycolumn+=1;return(LBRACEnum);}
-[/}]                {yycolumn+=1;return(RBRACEnum);}
-[/[]                {yycolumn+=1;return(LBRACnum);}
-]                   {yycolumn+=1;return(RBRACnum);}
-[(]                 {yycolumn+=1;return(LPARENnum);}
-[)]                 {yycolumn+=1;return(RPARENnum);}
-\'(\\.|[^\\'\n])*("\n") { 
+{newline}                 {yyline++; yycolumn=0;}
+"/*"(.*)"*/"              {yycolumn+=yyleng;}
+"/*"(.*)"\n"              {printf("Error: line %d: Unmatched comments.\n", yyline);yyline++; yycolumn=0;}
+&&                        {yycolumn+=2;return(ANDnum);}
+\|\|                      {yycolumn+=2;return(ORnum);}
+:=                        {yycolumn+=2;return(ASSGNnum);}
+declarations              {yycolumn+=12;return(DECLARATIONSnum);}
+enddeclarations           {yycolumn+=15;return(ENDDECLARATIONSnum);}
+int                       {yycolumn+=3;return(INTnum);}
+method                    {yycolumn+=6;return(METHODnum);}
+program                   {yycolumn+=7;return(PROGRAMnum);}
+val                       {yycolumn+=3;return(VALnum);}
+while                     {yycolumn+=5;return(WHILEnum);}
+class                     {yycolumn+=5;return(CLASSnum);}
+else                      {yycolumn+=4;return(ELSEnum);}
+if                        {yycolumn+=2;return(IFnum);}
+return                    {yycolumn+=6;return(RETURNnum);}
+void                      {yycolumn+=4;return(VOIDnum);} 
+[.]                       {yycolumn+=1;return(DOTnum);}
+[,]                       {yycolumn+=1;return(COMMAnum);}
+[;]                       {yycolumn+=1;return(SEMInum);}
+==                        {yycolumn+=2;return(EQnum);}
+!=                        {yycolumn+=2;return(NEnum);}
+>=                        {yycolumn+=2;return(GEnum);}
+\<=                       {yycolumn+=2;return(LEnum);}
+[=]                       {yycolumn+=1;return(EQUALnum);}
+[<]                       {yycolumn+=1;return(LTnum);}
+[>]                       {yycolumn+=1;return(GTnum);}
+[+]                       {yycolumn+=1;return(PLUSnum);}
+[-]                       {yycolumn+=1;return(MINUSnum);}
+[*]                       {yycolumn+=1;return(TIMESnum);}
+[/]                       {yycolumn+=1;return(DIVIDEnum);}
+[!]                       {yycolumn+=1;return(NOTnum);}
+{ws}                      {yycolumn+=yyleng;}
+{id}                      {yycolumn+=yyleng;yylength=yyleng;yystring=yytext;return(IDnum);}
+{wrongid}                 {yycolumn+=yyleng;printf("Error: line %d: Wrong ID.\n", yyline);}
+{consint}                 {yycolumn+=yyleng;return(ICONSTnum);}
+[/{]                      {yycolumn+=1;return(LBRACEnum);}
+[/}]                      {yycolumn+=1;return(RBRACEnum);}
+[/[]                      {yycolumn+=1;return(LBRACnum);}
+]                         {yycolumn+=1;return(RBRACnum);}
+[(]                       {yycolumn+=1;return(LPARENnum);}
+[)]                       {yycolumn+=1;return(RPARENnum);}
+\'(\\.|[^\\'\n])*("\n")   { 
                           printf("Error: line %d: Uneding String.\n", yyline);
                           yyline+=1;yycolumn=0;
-                      }
-\'(\\.|[^\\'\n])*(\') {
-                         if ((yytext[yyleng-1] == '\\') && (yytext[yyleng] == '\'')) 
+                          }
+\'(\\.|[^\\'\n])*(\')     {
+                          if ((yytext[yyleng-1] == '\\') && (yytext[yyleng] == '\'')) 
                               yymore();
-                         else {
-                             yycolumn+=yyleng;
-                             yystring=yytext;
-                             yylength=yyleng;
-                             return(SCONSTnum); 
-                             }
-                     }
-.                   {yycolumn+=yyleng;printf("Error: line %d: Wrong ID.\n", yyline);}
+                          else {
+                              yycolumn+=yyleng;
+                              yystring=yytext;
+                              yylength=yyleng;
+                              return(SCONSTnum); 
+                              }
+                          }
+.                         {yycolumn+=yyleng;printf("Error: line %d: Wrong ID.\n", yyline);}
 %%
 
 int yyline = 0;
