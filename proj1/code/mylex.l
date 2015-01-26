@@ -18,6 +18,18 @@ wrongid       [0-9]+[a-zA-Z]+
 delim         [ \t]
 ws            {delim}+
 newline       [\n]
+declarations  [dD][eE][cC][lL][aA][rR][aA][tT][iI][oO][nN][sS]
+enddeclarations  [eE][nN][dD][dD][eE][cC][lL][aA][rR][aA][tT][iI][oO][nN][sS]
+int           [iI][nN][tT]
+method        [mM][eE][tT][hH][oO][dD]
+program       [pP][rR][oO][gG][rR][aA][mM]
+val           [vV][aA][lL]
+while         [wW][hH][iI][lL][eE]
+class         [cC][lL][aA][sS][sS]
+else          [eE][lL][sS][eE]
+if            [iI][fF]
+return        [rR][eE][tT][uU][rR][nN]
+void          [vV][oO][iI][dD]
 
 %%
 {newline}                 {yyline++; yycolumn=0;}
@@ -26,18 +38,18 @@ newline       [\n]
 &&                        {yycolumn+=2;return(ANDnum);}
 \|\|                      {yycolumn+=2;return(ORnum);}
 :=                        {yycolumn+=2;return(ASSGNnum);}
-declarations              {yycolumn+=12;return(DECLARATIONSnum);}
-enddeclarations           {yycolumn+=15;return(ENDDECLARATIONSnum);}
-int                       {yycolumn+=3;return(INTnum);}
-method                    {yycolumn+=6;return(METHODnum);}
-program                   {yycolumn+=7;return(PROGRAMnum);}
-val                       {yycolumn+=3;return(VALnum);}
-while                     {yycolumn+=5;return(WHILEnum);}
-class                     {yycolumn+=5;return(CLASSnum);}
-else                      {yycolumn+=4;return(ELSEnum);}
-if                        {yycolumn+=2;return(IFnum);}
-return                    {yycolumn+=6;return(RETURNnum);}
-void                      {yycolumn+=4;return(VOIDnum);} 
+{declarations}            {yycolumn+=12;return(DECLARATIONSnum);}
+{enddeclarations}         {yycolumn+=15;return(ENDDECLARATIONSnum);}
+{int}                     {yycolumn+=3;return(INTnum);}
+{method}                  {yycolumn+=6;return(METHODnum);}
+{program}                 {yycolumn+=7;return(PROGRAMnum);}
+{val}                     {yycolumn+=3;return(VALnum);}
+{while}                   {yycolumn+=5;return(WHILEnum);}
+{class}                   {yycolumn+=5;return(CLASSnum);}
+{else}                    {yycolumn+=4;return(ELSEnum);}
+{if}                      {yycolumn+=2;return(IFnum);}
+{return}                  {yycolumn+=6;return(RETURNnum);}
+{void}                    {yycolumn+=4;return(VOIDnum);} 
 [.]                       {yycolumn+=1;return(DOTnum);}
 [,]                       {yycolumn+=1;return(COMMAnum);}
 [;]                       {yycolumn+=1;return(SEMInum);}
